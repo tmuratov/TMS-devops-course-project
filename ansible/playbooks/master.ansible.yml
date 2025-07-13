@@ -1,0 +1,13 @@
+- name: Setup Jenkins Master
+  hosts: jenkins_master
+  vars_files:
+    - ./files/become-pass.yml
+    - ./files/master-api.yml
+    - ./files/github-token.yml
+    - ./files/jks_pass.yml
+    - ./files/id_rsa.yml
+  become: true
+  roles:
+    #- docker-host
+    - jenkins-master-volume
+    - jenkins-master-container

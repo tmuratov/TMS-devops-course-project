@@ -1,0 +1,32 @@
+- name: Create user for ssh connection
+  ansible.builtin.user:
+    name: jenkins
+
+- name: Ensure Docker Compose directory exists
+  ansible.builtin.file:
+    path: "{{ master_compose_path }}"
+    state: directory
+    mode: '0644'
+
+- name: Copy compose resources
+  ansible.builtin.copy:
+    src: plugins.txt
+    dest: "{{ master_compose_path }}"
+    mode: "0600"
+
+- name: Deploy docker-compose
+  ansible.builtin.template:
+    src: master-compose.yml.j2
+    dest: "{{ master_compose_path }}/docker-compose.yml"
+    mode: preserve
+
+- name: Deploy Image build config
+  ansible.builtin.template:
+    src: Dockerfile
+    dest: "{{ master_compose_path }}"
+    mode: preserve
+
+- name: Start Jenkins Master container
+  community.docker.docker_compose_v2:
+    project_src: "{{ master_compose_path }}"
+    state: present

@@ -1,0 +1,33 @@
+services:
+  registry:
+    image: registry:2
+    ports:
+      - "{{ registry_port }}:{{ registry_port }}"
+    restart: always
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+    volumes:
+      - registry-data:/var/lib/registry
+    depends_on:
+      - dind
+    networks:
+      - {{ jenkins_docker_network }}
+
+  dind:
+    image: docker:dind
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    ports:
+      - "{{ dind_port }}:{{ dind_port }}"
+    networks:
+      - {{ jenkins_docker_network }}
+    volumes:
+      - ./daemon.json:/etc/docker/daemon.json
+
+volumes:
+  registry-data:
+
+networks:
+  {{ jenkins_docker_network }}:
+    external: true

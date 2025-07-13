@@ -1,0 +1,26 @@
+- name: Add Kibana APT repository
+  ansible.builtin.apt_repository:
+    repo: "{{ kibana_apt_repo }}"
+    filename: kibana
+    state: present
+
+- name: Install Kibana
+  ansible.builtin.apt:
+    name: kibana
+    state: present
+    update_cache: true
+
+- name: Configure kibana.yml
+  ansible.builtin.blockinfile:
+    path: /etc/kibana/kibana.yml
+    create: true
+    block: |
+      server.host: "{{ kibana_server_host }}"
+      elasticsearch.hosts: ["{{ kibana_elasticsearch_url }}"]
+
+- name: Enable and start Kibana
+  ansible.builtin.systemd:
+    name: kibana
+    enabled: true
+    state: started
+    daemon_reload: true

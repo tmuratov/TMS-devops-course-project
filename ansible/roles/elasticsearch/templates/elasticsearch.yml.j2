@@ -1,0 +1,6 @@
+network.host: {{ elasticsearch_network_host }}
+http.port: {{ elasticsearch_http_port }}
+path.data: {{ elasticsearch_data_dir }}
+path.logs: {{ elasticsearch_install_dir }}/logs
+xpack.security.enabled: false
+discovery.type: single-node

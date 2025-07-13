@@ -1,0 +1,4 @@
+logstash_version: "8.13.4"
+logstash_apt_repo: "deb [signed-by=/usr/share/keyrings/elasticsearch.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main"
+logstash_input_path: "/var/log/syslog"
+logstash_elasticsearch_host: "http://localhost:9200"

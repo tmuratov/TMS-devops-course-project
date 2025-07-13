@@ -1,0 +1,18 @@
+- name: Set up monitoring master
+  hosts: monitoring
+  become: true
+  vars_files:
+    - ./files/become-pass.yml
+  roles:
+    - elasticsearch
+    - kibana
+    - logstash
+    - filebeat
+
+- name: Set up monitoring targets
+  become: true
+  vars_files:
+    - ./files/become-pass.yml
+  hosts: monitored
+  roles:
+    - filebeat

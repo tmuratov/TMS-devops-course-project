@@ -1,0 +1,58 @@
+- name: Ensure elasticsearch user exists
+  ansible.builtin.user:
+    name: "{{ elasticsearch_user }}"
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+
+- name: Download Elasticsearch archive
+  ansible.builtin.get_url:
+    url: "{{ elasticsearch_download_url }}"
+    dest: /tmp/elasticsearch.tar.gz
+    mode: '0644'
+
+- name: Extract Elasticsearch
+  ansible.builtin.unarchive:
+    src: /tmp/elasticsearch.tar.gz
+    dest: "{{ elasticsearch_install_dir | dirname }}"
+    remote_src: true
+    extra_opts: [--strip-components=1]
+    creates: "{{ elasticsearch_install_dir }}"
+
+- name: Create data directory
+  ansible.builtin.file:
+    path: "{{ elasticsearch_data_dir }}"
+    state: directory
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: '0750'
+
+- name: Set ownership on install directory
+  ansible.builtin.file:
+    path: "{{ elasticsearch_install_dir }}"
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    recurse: true
+
+- name: Deploy elasticsearch.yml
+  ansible.builtin.template:
+    src: elasticsearch.yml.j2
+    dest: "{{ elasticsearch_install_dir }}/config/elasticsearch.yml"
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: '0644'
+  notify: Restart elasticsearch
+
+- name: Deploy systemd unit
+  ansible.builtin.template:
+    src: elasticsearch.service.j2
+    dest: /etc/systemd/system/elasticsearch.service
+    mode: '0644'
+  notify: Restart elasticsearch
+
+- name: Enable and start elasticsearch
+  ansible.builtin.systemd:
+    name: elasticsearch
+    enabled: true
+    state: started
+    daemon_reload: true

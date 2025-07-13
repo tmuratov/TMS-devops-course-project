@@ -1,0 +1,17 @@
+jenkins_docker_network: jenkins-network
+jenkins_volume_name: jenkins_home
+
+jenkins_port: 8080
+jenkins_secure_port: 8443
+jenkins_agent_port: 50000
+registry_port: 5000
+dind_port: 2375
+
+ssh_slave_listening_port: 2222
+
+jenkins_master_url: "http://{{ hostvars['master']['ansible_host'] }}:{{ jenkins_port }}"
+jenkins_master_secure_url: "https://{{ hostvars['master']['ansible_host'] }}:{{ jenkins_secure_port }}"
+
+jenkins_cert_path: /usr/local/share/ca-certificates/
+
+jre_package: openjdk-21-jre

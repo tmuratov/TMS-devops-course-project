@@ -1,0 +1,20 @@
+services:
+  agent:
+    {{ "build" if build_image else "image" }}: {{ jenkins_agent_image }}
+    container_name: jenkins-agent
+    restart: unless-stopped
+    ports:
+      - "{{ jenkins_agent_port }}:{{ jenkins_agent_port }}"
+    environment:
+      JENKINS_URL: "{{ jenkins_master_secure_url }}"
+      JENKINS_AGENT_NAME: "{{ jenkins_agent_name }}"
+      JENKINS_SECRET: "{{ jenkins_agent_secret }}"
+    networks:
+      - {{ jenkins_docker_network }}
+    volumes:
+      - {{ agent_compose_path }}/jenkins.crt:{{ jenkins_cert_path }}/jenkins.crt:ro
+
+
+networks:
+  {{ jenkins_docker_network }}:
+    external: true

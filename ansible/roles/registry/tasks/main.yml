@@ -1,0 +1,22 @@
+- name: Ensure Docker Compose directory exists
+  ansible.builtin.file:
+    path: "{{ registry_compose_path }}"
+    state: directory
+    mode: '0644'
+
+- name: Deploy Jenkins Agent Compose config
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ registry_compose_path }}/docker-compose.yml"
+    mode: preserve
+
+- name: Copy compose resources
+  ansible.builtin.copy:
+    src: daemon.json
+    dest: "{{ registry_compose_path }}"
+    mode: preserve
+
+- name: Start Jenkins agent container
+  community.docker.docker_compose_v2:
+    project_src: "{{ registry_compose_path }}"
+    state: present

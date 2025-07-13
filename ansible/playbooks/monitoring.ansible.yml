@@ -1,0 +1,17 @@
+- name: Set up monitoring master
+  hosts: monitoring
+  become: true
+  vars_files:
+    - ./files/become-pass.yml
+  roles:
+    - prometheus
+    - grafana
+    - node_exporter  # чтобы мониторить сам мониторинг-сервер
+
+- name: Set up monitoring targets
+  become: true
+  vars_files:
+    - ./files/become-pass.yml
+  hosts: monitored
+  roles:
+    - node_exporter

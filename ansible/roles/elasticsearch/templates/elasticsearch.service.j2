@@ -1,0 +1,14 @@
+[Unit]
+Description=Elasticsearch
+After=network.target
+
+[Service]
+Type=simple
+User={{ elasticsearch_user }}
+Group={{ elasticsearch_group }}
+ExecStart={{ elasticsearch_install_dir }}/bin/elasticsearch
+Restart=on-failure
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

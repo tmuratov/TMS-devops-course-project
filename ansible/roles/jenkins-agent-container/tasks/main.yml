@@ -1,0 +1,40 @@
+- name: Ensure Docker Compose directory exists
+  ansible.builtin.file:
+    path: "{{ agent_compose_path }}"
+    state: directory
+    mode: '0644'
+
+- name: Deploy Jenkins Agent Compose config
+  ansible.builtin.template:
+    src: agent-compose.yml.j2
+    dest: "{{ agent_compose_path }}/docker-compose.yml"
+    mode: preserve
+
+- name: Copy compose resources
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ agent_compose_path }}"
+    mode: preserve
+  loop:
+    - Dockerfile
+    - jenkins.crt
+
+- name: Start Jenkins agent container
+  community.docker.docker_compose_v2:
+    project_src: "{{ agent_compose_path }}"
+    state: restarted
+
+- name: Read public key from file
+  ansible.builtin.slurp:
+    src: "{{ localhost_master_pubkey_copy }}"
+  register: pubkey_file
+
+- name: Save master SSH pubkey as authorized
+  community.docker.docker_compose_v2_exec:
+    project_src: "{{ agent_compose_path }}"
+    service: agent
+    user: jenkins
+    command: >
+      mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys &&
+      grep "{{ pubkey_file.content }}" ~/.ssh/authorized_keys ||
+      echo "{{ pubkey_file.content }}" >> ~/.ssh/authorized_keys

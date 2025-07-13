@@ -1,0 +1,41 @@
+- name: Add Filebeat APT repository
+  ansible.builtin.apt_repository:
+    repo: "{{ filebeat_apt_repo }}"
+    filename: elastic
+    state: present
+
+- name: Install Filebeat
+  ansible.builtin.apt:
+    name: filebeat
+    state: present
+    update_cache: true
+
+- name: Configure Filebeat to ship to Logstash
+  ansible.builtin.copy:
+    dest: /etc/filebeat/filebeat.yml
+    content: |
+      filebeat.inputs:
+        - type: filestream
+          id: syslog-input
+          paths:
+            - /var/log/syslog
+
+      output.logstash:
+        hosts: ["{{ filebeat_logstash_host }}:{{ filebeat_logstash_port }}"]
+
+      setup.kibana:
+        host: "http://{{ filebeat_logstash_host }}:5601"
+
+      logging.level: info
+      monitoring.enabled: false
+    mode: "0644"
+    owner: root
+    group: root
+  notify: Restart filebeat
+
+- name: Enable and start Filebeat
+  ansible.builtin.systemd:
+    name: filebeat
+    enabled: true
+    state: started
+    daemon_reload: true

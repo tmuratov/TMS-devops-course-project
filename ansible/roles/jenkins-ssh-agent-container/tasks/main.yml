@@ -1,0 +1,28 @@
+- name: Ensure Docker Compose directory exists
+  ansible.builtin.file:
+    path: "{{ ssh_compose_path }}"
+    state: directory
+    mode: '0644'
+
+- name: Ensure Jenkins agent container is absent
+  community.docker.docker_compose_v2:
+    project_src: "{{ ssh_compose_path }}"
+    state: absent
+  failed_when: false  # always pass
+
+- name: Deploy Jenkins Agent Compose config
+  ansible.builtin.template:
+    src: agent-compose.yml.j2
+    dest: "{{ ssh_compose_path }}/docker-compose.yml"
+    mode: preserve
+
+- name: Deploy Dockerfile
+  ansible.builtin.template:
+    src: Dockerfile
+    dest: "{{ ssh_compose_path }}"
+    mode: preserve
+
+- name: Start Jenkins agent container
+  community.docker.docker_compose_v2:
+    project_src: "{{ ssh_compose_path }}"
+    state: present

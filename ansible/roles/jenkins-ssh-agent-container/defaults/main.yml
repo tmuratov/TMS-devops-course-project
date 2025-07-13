@@ -1,0 +1,4 @@
+ssh_compose_path: "/opt/jenkins-ssh-agent"
+
+ssh_agent_image: "{{ ssh_compose_path }}"
+build_image: true

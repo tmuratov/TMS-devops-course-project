@@ -1,0 +1,25 @@
+- name: Add Logstash APT repository
+  ansible.builtin.apt_repository:
+    repo: "{{ logstash_apt_repo }}"
+    filename: logstash
+    state: present
+
+- name: Install Logstash
+  ansible.builtin.apt:
+    name: logstash
+    state: present
+    update_cache: true
+
+- name: Deploy Logstash config for Filebeat
+  ansible.builtin.copy:
+    src: filebeat.conf
+    dest: /etc/logstash/conf.d/filebeat.conf
+    mode: '0644'
+  notify: Restart logstash
+
+- name: Enable and start Logstash
+  ansible.builtin.systemd:
+    name: logstash
+    enabled: true
+    state: started
+    daemon_reload: true
