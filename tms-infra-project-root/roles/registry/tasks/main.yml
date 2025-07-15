@@ -6,14 +6,14 @@
 
 - name: Deploy Jenkins Agent Compose config
   ansible.builtin.template:
-    src: docker-compose.yml.j2
+    src: docker-compose.yml.jinja2
     dest: "{{ registry_compose_path }}/docker-compose.yml"
     mode: preserve
 
 - name: Copy compose resources
-  ansible.builtin.copy:
-    src: daemon.json
-    dest: "{{ registry_compose_path }}"
+  ansible.builtin.template:
+    src: daemon.json.jinja2
+    dest: "{{ registry_compose_path }}/daemon.json"
     mode: preserve
 
 - name: Start Jenkins agent container

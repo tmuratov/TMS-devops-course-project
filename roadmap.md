@@ -25,5 +25,6 @@
     [ ] Get rid of Vagrant, this setup is kinda lame
         [ ] I mean keep it separately from the whole ansible project
         [ ] Add some kind of Python script for inventory management
+    [ ] Split inventory in separate files, e.g. masters.yml, agents.yml, monitoring.yml etc.
     [ ] Move `become` into roles' tasks instaed of declaring in playbooks. Don't sudo everything
     [ ] Manage prerequisites, filter prerequisites by host type

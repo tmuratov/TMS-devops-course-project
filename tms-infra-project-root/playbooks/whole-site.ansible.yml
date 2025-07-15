@@ -27,7 +27,11 @@
   become: true
   roles: [jenkins-ssh-agent-container]
 
-- name: Setup Registry
+- name: Setup Registry (with jenkins agent for easier access from pipelines)
   hosts: registry
   become: true
-  roles: [registry]
+  vars_files:
+    - ./files/jenkins_id_rsa.yml
+  roles:
+    - jenkins-ssh-agent-container
+    - registry

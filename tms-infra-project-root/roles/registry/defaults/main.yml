@@ -1,4 +1,7 @@
 registry_compose_path: "/opt/registry"
 
-registry_image: "registry:latest"
-build_image: false
+registry_image: "registry:2"
+build_registry_image: false
+
+dind_image: "registry:2"
+build_dind_image: false

@@ -1,8 +1,6 @@
-jenkins_casc_git_repo: https://{{ github_user }}:{{ github_token }}@github.com/tmuratov/devops-sandbox.git
-jenkins_casc_git_branch: lesson31-jcasc
+jenkins_dsl_git_repo: https://{{ github_user }}:{{ github_token }}@github.com/tmuratov/devops-sandbox.git
+jenkins_dsl_git_branch: tms-project-dsl-jobs
 
-jenkins_dsl_git_repo: "{{ jenkins_casc_git_repo }}"
-jenkins_dsl_git_branch: "{{ jenkins_casc_git_branch }}"
-
-jenkins_config_checkout_path: "{{ master_compose_path }}/casc-git"
-jenkins_config_checkout_path_casc: "{{ jenkins_config_checkout_path }}/jenkins/casc_configs"
+master_compose_config_path: "{{ master_compose_path }}/master-config"
+master_compose_config_path_casc: "{{ master_compose_config_path }}/casc_configs"
+master_compose_config_path_dsl: "{{ master_compose_config_path }}/jobs"

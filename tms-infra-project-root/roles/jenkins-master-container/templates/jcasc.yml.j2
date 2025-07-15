@@ -24,7 +24,7 @@ jenkins:
 {% for agent in groups['jenkins_ssh_agents'] %}
   - permanent:
       name: "ssh-{{ agent }}"
-      labelString: "ssh"
+      labelString: "{{ hostvars[agent]['agent_label_string'] }}"
       mode: "NORMAL"
       remoteFS: {{ agent_home_dir }}
       launcher:

@@ -1,0 +1,4 @@
+[submodule "dsl-jobs"]
+	path = dsl-jobs
+	url = https://github.com/tmuratov/devops-sandbox.git
+	branch = tms-project-dsl-jobs

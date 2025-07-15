@@ -11,7 +11,8 @@
         state: directory
         mode: "0644"
       loop:
-        - "{{ jenkins_config_checkout_path }}"
+        - "{{ master_compose_config_path_casc }}"
+        - "{{ master_compose_config_path_dsl }}"
         - "{{ master_compose_path }}"
 
     - name: Get JRE 21 (required for java keystore)
@@ -39,27 +40,21 @@
 ## JCasC from template ans DSL Jobs from Git
 - name: Jenkins configs and jobs
   block:
-    - name: Purge previous git download
-      ansible.builtin.file:
-        path: "{{ jenkins_config_checkout_path }}/"
-        state: absent
-        mode: "0644"
-
     - name: Clone DSL jobs repo
       ansible.builtin.git:
         repo: "{{ jenkins_dsl_git_repo }}"
-        dest: "{{ jenkins_config_checkout_path }}"
+        dest: "{{ master_compose_config_path_dsl }}"
         version: "{{ jenkins_dsl_git_branch }}"
         force: true
 
     - name: Apply casc overrides
       ansible.builtin.template:
         src: jcasc.yml.j2
-        dest: "{{ jenkins_config_checkout_path_casc }}/jenkins.yaml"
+        dest: "{{ master_compose_config_path_casc }}/jenkins.yaml"
         mode: "0600"
 
 
-    ## SSL/TLS setup
+## SSL/TLS setup
 - name: Jenkins secure connection
   block:
     - name: Copy SSL resources
@@ -95,7 +90,7 @@
   ansible.builtin.command: >
     docker run --rm
     -v {{ jenkins_volume_name }}:/jenkins_home
-    -v {{ jenkins_config_checkout_path }}/jenkins:/config
+    -v {{ master_compose_config_path }}:/config
     -v {{ master_compose_path }}:/ssl
     alpine sh -c "
         cp -rf /config/* /jenkins_home &&

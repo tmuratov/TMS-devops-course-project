@@ -1,6 +1,6 @@
 services:
   registry:
-    image: registry:2
+    {{ 'build:' if build_registry_image else 'image:' }}  {{ registry_image }}
     ports:
       - "{{ registry_port }}:{{ registry_port }}"
     restart: always
@@ -14,7 +14,7 @@ services:
       - {{ jenkins_docker_network }}
 
   dind:
-    image: docker:dind
+    {{ 'build:' if build_dind_image else 'image:' }}  {{ dind_image }}
     privileged: true
     environment:
       DOCKER_TLS_CERTDIR: ""

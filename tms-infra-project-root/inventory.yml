@@ -50,7 +50,11 @@ all:
     jenkins_ssh_agents:
       hosts:
         minion01:
+          agent_label_string: "ssh java maven"
         minion02:
+          agent_label_string: "ssh git"
+        minion03:
+          agent_label_string: "ssh dind docker registry"
 
     # image repository
     registry:
