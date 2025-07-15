@@ -1,0 +1,27 @@
+- name: Install Java (required by Elasticsearch)
+  ansible.builtin.apt:
+    name: "{{ elasticsearch_java_package }}"
+    state: present
+    update_cache: true
+
+- name: Download and dearmor Elastic GPG key
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      curl -fsSL {{ elasticsearch_key_url }} | gpg --dearmor -o {{ elasticsearch_gpg_file }}
+    executable: /bin/bash
+    creates: "{{ elasticsearch_gpg_file }}"
+
+- name: Add Elasticsearch repository
+  ansible.builtin.apt_repository:
+    repo: "{{ elasticsearch_apt_repo }}"
+    filename: elasticsearch
+    state: present
+
+- name: Install Elasticsearch
+  ansible.builtin.apt:
+    name: elasticsearch
+    state: present
+    update_cache: true
+  notify:
+    - Restart elasticsearch

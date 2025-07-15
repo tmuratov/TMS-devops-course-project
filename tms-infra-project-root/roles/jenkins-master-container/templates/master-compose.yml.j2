@@ -1,0 +1,37 @@
+services:
+  jenkins:
+    {{ "build" if build_image else "image" }}: {{ master_image }}
+    container_name: jenkins-master
+    ports:
+      - "{{ jenkins_secure_port }}:{{ jenkins_secure_port }}"
+      - "{{ jenkins_agent_port }}:{{ jenkins_agent_port }}"
+      - "{{ ssh_slave_listening_port }}:{{ ssh_slave_listening_port }}"
+    volumes:
+      - "{{ jenkins_volume_name }}:{{ master_home_dir }}"
+    networks:
+      - {{ jenkins_docker_network }}
+    environment:
+      CASC_JENKINS_CONFIG: {{ master_casc_dir }}/jenkins.yaml
+      JENKINS_ADMIN_PASSWORD: {{ master_admin_password }}
+
+    command: >
+      java
+      -Djenkins.model.Jenkins.slaveAgentPort=50000
+      -Djava.awt.headless=true
+      -Djenkins.install.runSetupWizard=false
+      -jar /usr/share/jenkins/jenkins.war
+      --httpPort=-1
+      --httpsPort={{ jenkins_secure_port }}
+      --httpsKeyStore={{ master_keystore }}
+      --httpsKeyStorePassword={{ master_keystore_password }}
+
+    restart: unless-stopped
+
+networks:
+  {{ jenkins_docker_network }}:
+    driver: bridge
+    external: true
+
+volumes:
+  {{ jenkins_volume_name }}:
+    external: true

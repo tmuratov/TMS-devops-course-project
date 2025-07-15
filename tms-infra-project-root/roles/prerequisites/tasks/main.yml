@@ -1,0 +1,51 @@
+- name: Remove conflicting packages if ansible.builtin.copy
+  ansible.builtin.apt:
+    name: "{{ conflicting_packages }}"
+    state: absent
+
+- name: Get curl
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+    update_cache: true
+
+- name: Set up docker repo
+  ansible.builtin.shell:
+    executable: /bin/bash
+    cmd: |
+      set -o pipefail
+      # Add Docker's official GPG key:
+      install -m 0755 -d /etc/apt/keyrings
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      chmod a+r /etc/apt/keyrings/docker.asc
+
+      # Add the repository to Apt sources:
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null
+      apt-get update
+    creates: /etc/apt/sources.list.d/docker.list
+
+- name: Install ALL required packages
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present
+    update_cache: true
+
+- name: Create plugin dir if missing
+  ansible.builtin.file:
+    path: /usr/local/lib/docker/cli-plugins
+    state: directory
+    mode: '0755'
+
+- name: Ensure Docker service is started
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ensure docker network exists (it's external and shared between hosts)
+  community.docker.docker_network:
+    name: "{{ jenkins_docker_network }}"

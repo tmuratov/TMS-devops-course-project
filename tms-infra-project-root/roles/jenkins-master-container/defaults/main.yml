@@ -1,0 +1,8 @@
+jenkins_casc_git_repo: https://{{ github_user }}:{{ github_token }}@github.com/tmuratov/devops-sandbox.git
+jenkins_casc_git_branch: lesson31-jcasc
+
+jenkins_dsl_git_repo: "{{ jenkins_casc_git_repo }}"
+jenkins_dsl_git_branch: "{{ jenkins_casc_git_branch }}"
+
+jenkins_config_checkout_path: "{{ master_compose_path }}/casc-git"
+jenkins_config_checkout_path_casc: "{{ jenkins_config_checkout_path }}/jenkins/casc_configs"

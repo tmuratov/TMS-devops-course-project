@@ -1,0 +1,4 @@
+# vm_box: "ubuntu/focal64"  # <-- latest official but 20.04 doesn't support docker :(
+
+vm_box: bento/ubuntu-24.04
+vm_update: "false"  # string!

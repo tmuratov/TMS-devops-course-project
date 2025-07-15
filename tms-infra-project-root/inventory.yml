@@ -1,0 +1,70 @@
+all:
+  vars:
+    ansible_user: servitor
+    ansible_ssh_private_key_file: ~/.ssh/id_rsa
+    ansible_python_interpreter: /usr/bin/python3
+  hosts:
+    siteholder: # ungrouped
+      ansible_host: localhost
+    # big guys
+    servant01:
+      ansible_host: 192.168.56.10
+      cpu: 2
+      ram: 4096
+    servant02:
+      ansible_host: 192.168.56.11
+      cpu: 2
+      ram: 4096
+    # small fry
+    minion01:
+      ansible_host: 192.168.56.20
+      cpu: 1
+      ram: 2048
+    minion02:
+      ansible_host: 192.168.56.21
+      cpu: 1
+      ram: 2048
+    minion03:
+      ansible_host: 192.168.56.22
+      cpu: 1
+      ram: 2048
+
+  children:
+
+    # Vagrantize this test stand!
+    vagrant_master:
+      hosts:
+        siteholder:
+    vagrant_machines:
+      hosts:
+        servant01:
+        servant02:
+        minion01:
+        minion02:
+        minion03:
+
+    # CI/CD
+    jenkins_master:
+      hosts:
+        servant01:  # master of CI/CD
+    jenkins_ssh_agents:
+      hosts:
+        minion01:
+        minion02:
+
+    # image repository
+    registry:
+      hosts:
+        minion03:
+
+    # monitoring and logs aggregation
+    monitoring:
+      hosts:
+        servant02:  # master of monitoring
+    monitored:
+      hosts:
+        servant01:
+        servant02:
+        minion01:
+        minion02:
+        minion03:

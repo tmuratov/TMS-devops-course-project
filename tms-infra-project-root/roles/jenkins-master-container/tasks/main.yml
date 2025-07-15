@@ -1,0 +1,129 @@
+### common stuff
+- name: Jenkins master prerequisites
+  block:
+    - name: Create user for ssh connection
+      ansible.builtin.user:
+        name: jenkins
+
+    - name: Ensure working directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0644"
+      loop:
+        - "{{ jenkins_config_checkout_path }}"
+        - "{{ master_compose_path }}"
+
+    - name: Get JRE 21 (required for java keystore)
+      ansible.builtin.apt:
+        name:
+          - "{{ jre_package }}"
+        state: present
+
+
+### Prepare volume with JCasC and everything
+- name: Jenkins master volume
+  block:
+    ## docker preps
+    - name: Stop Jenkins Master container
+      community.docker.docker_compose_v2:
+        project_src: "{{ master_compose_path }}"
+        state: absent
+      failed_when: false # always pass, just to be sure that compose is down
+
+    - name: Ensure Jenkins Docker volume exists
+      community.docker.docker_volume:
+        name: "{{ jenkins_volume_name }}"
+        state: present
+
+## JCasC from template ans DSL Jobs from Git
+- name: Jenkins configs and jobs
+  block:
+    - name: Purge previous git download
+      ansible.builtin.file:
+        path: "{{ jenkins_config_checkout_path }}/"
+        state: absent
+        mode: "0644"
+
+    - name: Clone DSL jobs repo
+      ansible.builtin.git:
+        repo: "{{ jenkins_dsl_git_repo }}"
+        dest: "{{ jenkins_config_checkout_path }}"
+        version: "{{ jenkins_dsl_git_branch }}"
+        force: true
+
+    - name: Apply casc overrides
+      ansible.builtin.template:
+        src: jcasc.yml.j2
+        dest: "{{ jenkins_config_checkout_path_casc }}/jenkins.yaml"
+        mode: "0600"
+
+
+    ## SSL/TLS setup
+- name: Jenkins secure connection
+  block:
+    - name: Copy SSL resources
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{ master_compose_path }}"
+        mode: preserve
+      loop:
+        - jenkins.crt
+        - jenkins.key
+      register: new_certificate
+
+    - name: Generate PKCS12 keystore from certificate
+      ansible.builtin.command: >
+        openssl pkcs12 -export -in {{ master_compose_path }}/jenkins.crt
+        -inkey {{ master_compose_path }}/jenkins.key
+        -out {{ master_compose_path }}/jenkins.p12
+        -name jenkins
+        -passout pass:{{ master_keystore_password }}
+      changed_when: new_certificate is changed
+
+    - name: Generate Java keystore (JKS) from PKCS12
+      ansible.builtin.command: >
+        keytool -noprompt -importkeystore
+        -deststorepass {{ master_keystore_password }} -destkeypass {{ master_keystore_password }}
+        -destkeystore {{ master_compose_path }}/jenkins.jks
+        -srckeystore {{ master_compose_path }}/jenkins.p12 -srcstoretype PKCS12
+        -srcstorepass {{ master_keystore_password }} -alias jenkins
+      changed_when: new_certificate is changed
+
+## deploy!
+- name: Copy resources into Docker volume
+  ansible.builtin.command: >
+    docker run --rm
+    -v {{ jenkins_volume_name }}:/jenkins_home
+    -v {{ jenkins_config_checkout_path }}/jenkins:/config
+    -v {{ master_compose_path }}:/ssl
+    alpine sh -c "
+        cp -rf /config/* /jenkins_home &&
+        cp -f /ssl/jenkins.jks /jenkins_home &&
+        chown -R 1000:1000 /jenkins_home
+    "
+  changed_when: true
+
+### Compose up!
+- name: Copy compose resources
+  ansible.builtin.copy:
+    src: plugins.txt
+    dest: "{{ master_compose_path }}"
+    mode: "0600"
+
+- name: Deploy docker-compose
+  ansible.builtin.template:
+    src: master-compose.yml.j2
+    dest: "{{ master_compose_path }}/docker-compose.yml"
+    mode: preserve
+
+- name: Deploy Image build config
+  ansible.builtin.template:
+    src: Dockerfile
+    dest: "{{ master_compose_path }}"
+    mode: preserve
+
+- name: Start Jenkins Master container
+  community.docker.docker_compose_v2:
+    project_src: "{{ master_compose_path }}"
+    state: present

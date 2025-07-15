@@ -1,0 +1,16 @@
+services:
+  agent:
+    {{ "build" if build_image else "image" }}: {{ ssh_agent_image }}
+    container_name: jenkins-agent
+    restart: unless-stopped
+    ports:
+      - "{{ ssh_slave_listening_port }}:{{ ssh_slave_listening_port }}"
+    environment:
+      JENKINS_URL: "{{ jenkins_master_secure_url }}"
+    networks:
+      - {{ jenkins_docker_network }}
+
+
+networks:
+  {{ jenkins_docker_network }}:
+    external: true

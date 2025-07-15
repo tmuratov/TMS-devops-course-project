@@ -1,0 +1,19 @@
+### for now, all hosts have the same prerequisites installed
+
+conflicting_packages:
+  - docker.io
+  - docker-compose
+  - docker-compose-v2
+  - docker-doc
+  - podman-docker
+
+docker_packages:
+  - apt-transport-https
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+  - python3-pip
+  - software-properties-common
+  - "{{ jre_package or 'openjdk-21-jre' }}"

@@ -1,8 +1,0 @@
-master_compose_path: /opt/jenkins-master
-master_home_dir: /var/jenkins_home
-master_casc_dir: "{{ master_home_dir }}/casc_configs"
-
-master_keystore: "/tmp/jenkins.jks"
-
-master_image: "{{ master_compose_path }}"
-build_image: true

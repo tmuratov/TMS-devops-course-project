@@ -1,4 +1,0 @@
-filebeat_version: "8.13.4"
-filebeat_apt_repo: "deb [signed-by=/usr/share/keyrings/elasticsearch.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main"
-filebeat_logstash_host: "elk-master"
-filebeat_logstash_port: 5044

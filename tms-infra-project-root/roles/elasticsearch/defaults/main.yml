@@ -1,0 +1,5 @@
+elasticsearch_version: "8.18.3"
+elasticsearch_key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+elasticsearch_gpg_file: /usr/share/keyrings/elasticsearch.gpg
+elasticsearch_apt_repo: "deb [signed-by={{ elasticsearch_gpg_file }}] https://artifacts.elastic.co/packages/8.x/apt stable main"
+elasticsearch_java_package: "{{ jre_package or 'openjdk-21-jre' }}"

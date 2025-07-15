@@ -1,0 +1,33 @@
+# - name: Vagrantize!
+#   hosts: siteholder
+#   roles: [vagrantize]
+
+# - name: Play prerequisites
+#   hosts: vagrant_machines
+#   become: true
+#   roles: [prerequisites]   # installs docker, jre, python and other stuff
+
+### CI/CD
+
+- name: Jenkins master container
+  hosts: jenkins_master
+  vars_files:
+    # - ./files/become-pass.yml  # remote_user is nopasswd
+    - ./files/master-api.yml
+    - ./files/github-token.yml
+    - ./files/jks_pass.yml
+    - ./files/jenkins_id_rsa.yml
+  become: true
+  roles: [jenkins-master-container]
+
+- name: Setup Jenkins SSH Agents
+  hosts: jenkins_ssh_agents
+  vars_files:
+    - ./files/jenkins_id_rsa.yml
+  become: true
+  roles: [jenkins-ssh-agent-container]
+
+- name: Setup Registry
+  hosts: registry
+  become: true
+  roles: [registry]

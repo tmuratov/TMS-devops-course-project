@@ -1,0 +1,56 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+is_wsl = ENV['WSL_INTEROP'] || ENV['WSL_DISTRO_NAME']
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "{{ vm_box }}"
+  config.vm.box_check_update = {{ vm_update }}
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = {{ vm_update }}
+  end
+
+  {% for host in groups['vagrant_machines'] -%}
+
+  config.vm.define "{{ host }}" do |vm|
+    vm.vm.hostname = "{{ host }}"
+    vm.vm.network "private_network", ip: "{{ hostvars[host]['ansible_host'] }}"
+    vm.vm.provider "virtualbox" do |vb|
+      vb.name = "{{ host }}"
+      vb.cpus = {{ hostvars[host]['cpu'] }}
+      vb.memory = {{ hostvars[host]['ram'] }}
+      vb.gui = false
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+      vb.customize ["modifyvm", :id, "--ioapic", "on"]
+      vb.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
+    end
+  end
+  {% endfor %}
+  [{%- for item in groups['vagrant_machines'] -%}"{{ item }}"{{ ',' if not loop.last else '' }}{%- endfor -%}].each_with_index do |vm_name, index|
+    config.vm.define vm_name do |vm|
+      vm.vm.provision "shell", inline: <<-SHELL
+        timedatectl set-timezone Europe/Moscow
+
+        sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+        systemctl restart ssh
+
+        useradd -mU -s /bin/bash -G sudo {{ ansible_user }}
+
+        grep -q "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL" /etc/sudoers.d/{{ ansible_user }} || \
+        echo "{{ ansible_user }} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/{{ ansible_user }}
+
+        mkdir -p /home/{{ ansible_user }}/.ssh && touch /home/{{ ansible_user }}/.ssh/authorized_keys
+        grep -q "{{ ssh_public_key | replace('\n', '') }}" /home/{{ ansible_user }}/.ssh/authorized_keys || \
+        echo "{{ ssh_public_key | replace('\n', '') }}" >> /home/{{ ansible_user }}/.ssh/authorized_keys
+
+        mkdir -p /root/.ssh && touch /root/.ssh/authorized_keys
+        grep -q "{{ ssh_public_key | replace('\n', '') }}" /root/.ssh/authorized_keys || \
+        echo "{{ ssh_public_key | replace('\n', '') }}" >> /root/.ssh/authorized_keys
+
+        echo "Машина #{vm_name} настроена успешно"
+      SHELL
+    end
+  end
+end

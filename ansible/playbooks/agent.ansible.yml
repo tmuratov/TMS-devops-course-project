@@ -1,8 +1,0 @@
-- name: Setup Jenkins Agents
-  hosts: jenkins_agents
-  vars_files:
-    - ./files/become-pass.yml
-  become: true
-  roles:
-    # - docker-host
-    - jenkins-agent-container

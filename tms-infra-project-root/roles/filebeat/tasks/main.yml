@@ -1,0 +1,42 @@
+- name: Download and dearmor Elastic GPG key
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      curl -fsSL {{ elasticsearch_key_url }} | gpg --dearmor -o {{ elasticsearch_gpg_file }}
+    executable: /bin/bash
+    creates: "{{ elasticsearch_gpg_file }}"
+
+- name: Add Elasticsearch repository
+  ansible.builtin.apt_repository:
+    repo: "{{ elasticsearch_apt_repo }}"
+    filename: elasticsearch
+    state: present
+
+- name: Install Filebeat
+  ansible.builtin.apt:
+    name: filebeat
+    state: present
+    update_cache: true
+
+- name: Configure Filebeat to ship to Logstash
+  ansible.builtin.copy:
+    dest: /etc/filebeat/filebeat.yml
+    content: |
+      filebeat.inputs:
+        - type: filestream
+          id: syslog-input
+          paths:
+            - /var/log/syslog
+
+      output.logstash:
+        hosts: ["{{ filebeat_logstash_host }}:{{ filebeat_logstash_port }}"]
+
+      setup.kibana:
+        host: "http://{{ filebeat_logstash_host }}:5601"
+
+      logging.level: info
+      monitoring.enabled: false
+    mode: "0644"
+    owner: root
+    group: root
+  notify: Restart filebeat
