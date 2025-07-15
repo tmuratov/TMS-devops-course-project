@@ -1,0 +1,40 @@
+- name: Jenkins master container
+  hosts: jenkins_master
+  become: true
+  tasks:
+    - name: Compose down
+      community.docker.docker_compose_v2:
+        state: absent
+        project_src: "{{ master_compose_path }}"
+      failed_when: false
+      when: true
+
+    - name: Remove compose directories
+      ansible.builtin.file:
+        state: absent
+        path: "{{ master_compose_path }}"
+
+    - name: Remove volume
+      community.docker.docker_volume:
+        volume_name: "{{ jenkins_volume_name }}"
+        state: absent
+
+### monitoring
+
+- name: Monitoring master
+  hosts: monitoring
+  become: true
+  vars_files:
+    - ../roles/monitoring-master/defaults/main.yml
+  tasks:
+    - name: Compose down
+      community.docker.docker_compose_v2:
+        state: absent
+        project_src: "{{ monitoring_compose_dir }}"
+      failed_when: false
+      when: true
+
+    - name: Remove compose directories
+      ansible.builtin.file:
+        state: absent
+        path: "{{ monitoring_compose_dir }}"

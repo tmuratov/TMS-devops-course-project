@@ -4,16 +4,25 @@
     - name: Create user for ssh connection
       ansible.builtin.user:
         name: jenkins
+        group: jenkins
+        uid: 1000
+        non_unique: true
 
     - name: Ensure working directories exist
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
-        mode: "0644"
+        mode: "0777"
       loop:
-        - "{{ master_compose_config_path_casc }}"
         - "{{ master_compose_config_path_dsl }}"
         - "{{ master_compose_path }}"
+
+    - name: Ensure working directories exist
+      ansible.builtin.file:
+        path: "{{ master_compose_config_path_casc }}"
+        state: directory
+        mode: "0777"
+        owner: jenkins
 
     - name: Get JRE 21 (required for java keystore)
       ansible.builtin.apt:
@@ -51,7 +60,8 @@
       ansible.builtin.template:
         src: jcasc.yml.j2
         dest: "{{ master_compose_config_path_casc }}/jenkins.yaml"
-        mode: "0600"
+        mode: "0777"
+        owner: jenkins
 
 
 ## SSL/TLS setup
@@ -62,6 +72,7 @@
         src: "{{ item }}"
         dest: "{{ master_compose_path }}"
         mode: preserve
+        owner: jenkins
       loop:
         - jenkins.crt
         - jenkins.key
@@ -98,13 +109,15 @@
         chown -R 1000:1000 /jenkins_home
     "
   changed_when: true
+  when: true
 
 ### Compose up!
 - name: Copy compose resources
   ansible.builtin.copy:
     src: plugins.txt
     dest: "{{ master_compose_path }}"
-    mode: "0600"
+    mode: "0644"
+    owner: jenkins
 
 - name: Deploy docker-compose
   ansible.builtin.template:

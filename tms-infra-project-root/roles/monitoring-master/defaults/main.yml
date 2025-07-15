@@ -1,0 +1,12 @@
+prometheus_image: "prom/prometheus:latest"
+build_prometheus_image: false
+
+grafana_image: "grafana/grafana:latest"
+build_grafana_image: false
+
+monitoring_compose_dir: /opt/monitoring
+compose_prometheus_dir: "{{ monitoring_compose_dir }}/prometheus"
+compose_prometheus_cert_dir: "{{ compose_prometheus_dir }}/certs"
+
+compose_grafana_dir: "{{ monitoring_compose_dir }}/grafana"
+compose_grafana_provisioning_dir: "{{ compose_grafana_dir }}/provisioning"

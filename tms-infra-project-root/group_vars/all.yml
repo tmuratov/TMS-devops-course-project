@@ -7,12 +7,19 @@ jenkins_agent_port: 50000
 registry_port: 5000
 dind_port: 2375
 
+prometheus_port: 9090
+grafana_port: 3000
+node_exporter_port: 9100
+
 ssh_slave_listening_port: 2222
 
 jenkins_master_host: "{{ groups['jenkins_master'][0] }}"
+jenkins_master_host_ip: "{{ hostvars[jenkins_master_host]['ansible_host'] }}"
+jenkins_master_url: "http://{{ jenkins_master_host_ip }}:{{ jenkins_port }}"
+jenkins_master_secure_url: "https://{{ jenkins_master_host_ip }}:{{ jenkins_secure_port }}"
 
-jenkins_master_url: "http://{{ hostvars[jenkins_master_host]['ansible_host'] }}:{{ jenkins_port }}"
-jenkins_master_secure_url: "https://{{ hostvars[jenkins_master_host]['ansible_host'] }}:{{ jenkins_secure_port }}"
+monitoring_master_host: "{{ groups['monitoring'][0] }}"
+monitoring_master_host_ip: "{{ hostvars[monitoring_master_host]['ansible_host'] }}"
 
 jenkins_cert_path: /usr/local/share/ca-certificates/
 

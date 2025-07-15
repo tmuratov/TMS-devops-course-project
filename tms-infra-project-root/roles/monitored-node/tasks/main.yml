@@ -1,0 +1,9 @@
+- name: Pull node_exporter container
+  community.docker.docker_container:
+    name: node_exporter
+    image: "{{ node_exporter_image }}"
+    state: started
+    restart_policy: unless-stopped
+    network_mode: host
+    published_ports:
+      - "{{ node_exporter_port }}:{{ node_exporter_port }}"

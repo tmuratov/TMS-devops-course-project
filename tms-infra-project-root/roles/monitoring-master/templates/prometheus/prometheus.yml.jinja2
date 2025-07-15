@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'jenkins'
+    metrics_path: /prometheus
+    scheme: https
+    static_configs:
+      - targets: ['{{ jenkins_master_host_ip }}:{{ jenkins_secure_port }}']
+    basic_auth:
+      username: {{ master_api_user }}
+      password: {{ master_admin_password }}
+    tls_config:
+      ca_file: /etc/prometheus/certs/jenkins.crt
+      insecure_skip_verify: true
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets:
+      {% for host in groups['monitored'] %}
+          - {{ hostvars[host]['ansible_host'] }}:{{ node_exporter_port }}
+      {% endfor %}
