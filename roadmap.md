@@ -1,13 +1,16 @@
 ### Roadmap
 
     [x] Control node setup
-        script `install_ansible.sh` installs ansible, creates and configures remote_user on localhost
+        [x] Bring up multiple VMs using Vagrant
+            [x] use Ansible role for that, use jinja-templates with hostvars
+        [x] script `install_ansible.sh` installs ansible, creates and configures remote_user on localhost
     [x] Jenkins + SSH agents
         [x] SSL/TLS
         [x] JCasC
         [ ] DSL jobs -- add repository here as submodule
         [ ] Git hooks on jobs
         [ ] Notification - Telegram or/and email
+        [ ]
     [ ] Monitoring
         [ ] run in containers
         [ ] automated initialization

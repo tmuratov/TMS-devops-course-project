@@ -142,7 +142,7 @@ jobs:
         scm {
           git {
             remote {
-              url('jenkins_dsl_git_repo')
+              url('{{ jenkins_dsl_git_repo_raw }}')
               credentials('git-credentials')   // <-- use id from credentials above
             }
             branches('{{ jenkins_dsl_git_branch }}')

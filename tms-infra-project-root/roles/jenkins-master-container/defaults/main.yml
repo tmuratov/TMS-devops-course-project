@@ -1,3 +1,4 @@
+jenkins_dsl_git_repo_raw: https://github.com/tmuratov/devops-sandbox.git
 jenkins_dsl_git_repo: https://{{ github_user }}:{{ github_token }}@github.com/tmuratov/devops-sandbox.git
 jenkins_dsl_git_branch: tms-project-dsl-jobs
 

@@ -3,6 +3,7 @@ FROM ubuntu:noble
 RUN apt update && apt install -y \
     openssh-server \
     {{ jre_package }} \
+    git \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
