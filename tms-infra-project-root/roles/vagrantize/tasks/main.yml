@@ -107,6 +107,7 @@
         PATH: "{{ ansible_env.PATH }}:/mnt/c/Windows/System32:/mnt/c/Windows/System32/WindowsPowerShell/v1.0"
       changed_when: true # always update vms
       when: ansible_facts.get('virtualization_type') == "wsl"
+      notify: Wait for wakeup
 
     - name: Vagrant up! (native Linux)
       ansible.builtin.shell:
@@ -116,3 +117,4 @@
       become: true
       changed_when: true # always update vms
       when: ansible_facts.get('virtualization_type') != "wsl"
+      notify: Wait for wakeup
