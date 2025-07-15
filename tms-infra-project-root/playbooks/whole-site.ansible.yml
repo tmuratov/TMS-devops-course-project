@@ -1,11 +1,11 @@
-# - name: Vagrantize!
-#   hosts: siteholder
-#   roles: [vagrantize]
+- name: Vagrantize!
+  hosts: siteholder
+  roles: [vagrantize]
 
-# - name: Play prerequisites
-#   hosts: vagrant_machines
-#   become: true
-#   roles: [prerequisites]   # installs docker, jre, python and other stuff
+- name: Play prerequisites
+  hosts: vagrant_machines
+  become: true
+  roles: [prerequisites]   # installs docker, jre, python and other stuff
 
 ### CI/CD
 
@@ -33,5 +33,21 @@
   vars_files:
     - ./files/jenkins_id_rsa.yml
   roles:
-    - jenkins-ssh-agent-container
     - registry
+
+### monitoring
+
+- name: Monitoring master
+  hosts: monitoring
+  become: true
+  vars_files:
+    - ./files/master-api.yml
+  roles:
+    - monitoring-master
+
+- name: Monitored nodes
+  hosts: monitored
+  become: true
+  roles:
+    - monitored-node
+

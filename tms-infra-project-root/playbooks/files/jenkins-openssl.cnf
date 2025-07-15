@@ -17,4 +17,4 @@ CN = jenkins.local
 subjectAltName = @alt_names
 
 [alt_names]
-IP.1  = 192.168.56.3
+IP.1  = 192.168.56.10

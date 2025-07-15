@@ -58,6 +58,7 @@ pipeline-stage-tags-metadata:2.2255.v56a_15e805f12
 plain-credentials:199.v9f8e1f741799
 plugin-util-api:6.1.0
 prism-api:1.30.0-1
+prometheus:819.v50953a_c560dd
 scm-api:704.v3ce5c542825a_
 script-security:1373.vb_b_4a_a_c26fa_00
 snakeyaml-api:2.3-125.v4d77857a_b_402

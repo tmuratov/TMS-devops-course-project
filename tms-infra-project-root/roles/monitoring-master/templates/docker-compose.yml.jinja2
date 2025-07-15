@@ -1,0 +1,30 @@
+services:
+  prometheus:
+    {{ "build" if build_prometheus_image else "image" }}: {{ prometheus_image }}
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/certs:/etc/prometheus/certs
+    ports:
+      - "{{ prometheus_port }}:{{ prometheus_port }}"
+    networks:
+      - monitoring
+
+  grafana:
+    {{ "build" if build_grafana_image else "image" }}: {{ grafana_image }}
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - DS_PROMETHEUS=Prometheus
+    ports:
+      - "{{ grafana_port }}:{{ grafana_port }}"
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge

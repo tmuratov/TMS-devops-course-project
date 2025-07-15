@@ -1,0 +1,46 @@
+- name: Purge leftovers
+  ansible.builtin.file:
+    path: "{{ monitoring_compose_dir }}"
+    state: absent
+
+- name: Prep working directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0777"
+  loop:
+    - "{{ compose_grafana_provisioning_dir }}/dashboards"
+    - "{{ compose_grafana_provisioning_dir }}/datasources"
+    - "{{ compose_prometheus_cert_dir }}"
+
+- name: Copy SSL resources
+  ansible.builtin.copy:
+    src: jenkins.crt
+    dest: "{{ compose_prometheus_cert_dir }}/"
+    mode: '0644'
+
+- name: Copy Prometheus config
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  with_items:
+    - src: docker-compose.yml.jinja2
+      dest: "{{ monitoring_compose_dir }}/docker-compose.yml"
+    - src: prometheus/prometheus.yml.jinja2
+      dest: "{{ compose_prometheus_dir }}/prometheus.yml"
+    - src: grafana/provisioning/dashboards/default.yml.jinja2
+      dest: "{{ compose_grafana_provisioning_dir }}/dashboards/default.yml"
+    - src: grafana/provisioning/datasources/prometheus.yml.jinja2
+      dest: "{{ compose_grafana_provisioning_dir }}/datasources/prometheus.yml"
+
+- name: Copy Grafana dashboards
+  ansible.builtin.copy:
+    src: grafana_dashboards/
+    dest: "{{ compose_grafana_provisioning_dir }}/dashboards/"
+    mode: preserve
+
+- name: Start monitoring stack
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_compose_dir }}"
+    state: present
