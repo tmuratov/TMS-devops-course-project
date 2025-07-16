@@ -1,5 +1,6 @@
-jenkins_dsl_git_repo_raw: https://github.com/tmuratov/devops-sandbox.git
-jenkins_dsl_git_repo: https://{{ github_user }}:{{ github_token }}@github.com/tmuratov/devops-sandbox.git
+jenkins_dsl_repo_name: devops-sandbox
+jenkins_dsl_git_repo_raw: https://github.com/tmuratov/{{ jenkins_dsl_repo_name }}.git
+jenkins_dsl_git_repo: https://{{ github_user }}:{{ github_token }}@github.com/tmuratov/{{ jenkins_dsl_repo_name }}.git
 jenkins_dsl_git_branch: tms-project-dsl-jobs
 
 master_compose_config_path: "{{ master_compose_path }}/master-config"

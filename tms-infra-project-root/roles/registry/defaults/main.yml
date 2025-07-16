@@ -3,5 +3,5 @@ registry_compose_path: "/opt/registry"
 registry_image: "registry:2"
 build_registry_image: false
 
-dind_image: "registry:2"
+dind_image: "docker:dind"
 build_dind_image: false

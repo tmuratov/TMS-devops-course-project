@@ -9,17 +9,6 @@
 
 # ### CI/CD
 
-# - name: Jenkins master container
-#   hosts: jenkins_master
-#   vars_files:
-#     # - ./files/become-pass.yml  # remote_user is nopasswd
-#     - ./files/master-api.yml
-#     - ./files/github-token.yml
-#     - ./files/jks_pass.yml
-#     - ./files/jenkins_id_rsa.yml
-#   become: true
-#   roles: [jenkins-master-container]
-
 - name: Setup Jenkins SSH Agents
   hosts: jenkins_ssh_agents
   vars_files:
@@ -27,27 +16,39 @@
   become: true
   roles: [jenkins-ssh-agent-container]
 
-# - name: Setup Registry (with jenkins agent for easier access from pipelines)
-#   hosts: registry
-#   become: true
-#   vars_files:
-#     - ./files/jenkins_id_rsa.yml
-#   roles:
-#     - registry
+- name: Jenkins master container
+  hosts: jenkins_master
+  vars_files:
+    # - ./files/become-pass.yml  # remote_user is nopasswd
+    - ./files/master-api.yml
+    - ./files/github-token.yml
+    - ./files/jks_pass.yml
+    - ./files/jenkins_id_rsa.yml
+    - ./files/tg_bot.yml
+  become: true
+  roles: [jenkins-master-container]
 
-# ### monitoring
+- name: Setup Registry (with jenkins agent for easier access from pipelines)
+  hosts: registry
+  become: true
+  vars_files:
+    - ./files/jenkins_id_rsa.yml
+  roles:
+    - registry
 
-# - name: Monitoring master
-#   hosts: monitoring
-#   become: true
-#   vars_files:
-#     - ./files/master-api.yml
-#   roles:
-#     - monitoring-master
+### monitoring
 
-# - name: Monitored nodes
-#   hosts: monitored
-#   become: true
-#   roles:
-#     - monitored-node
+- name: Monitoring master
+  hosts: monitoring
+  become: true
+  vars_files:
+    - ./files/master-api.yml
+  roles:
+    - monitoring-master
+
+- name: Monitored nodes
+  hosts: monitored
+  become: true
+  roles:
+    - monitored-node
 

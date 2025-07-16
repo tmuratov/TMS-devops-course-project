@@ -13,6 +13,9 @@ services:
     environment:
       CASC_JENKINS_CONFIG: {{ master_casc_dir }}/jenkins.yaml
       JENKINS_ADMIN_PASSWORD: {{ master_admin_password }}
+      TELEGRAM_BOT_TOKEN: {{ tg_bot_api_token }}
+      TELEGRAM_CHAT_ID: {{ tg_target_chat_id }}
+
 
     command: >
       java

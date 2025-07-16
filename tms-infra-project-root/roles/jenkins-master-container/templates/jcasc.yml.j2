@@ -100,6 +100,8 @@ unclassified:
     useTls: false
   pollSCM:
     pollingThreadCount: 10
+#  githubPluginConfig:
+#    hookUrl: "{{ jenkins_master_secure_url}}/github-webhook/"
 tool:
   mavenGlobalConfig:
     globalSettingsProvider: "standard"
@@ -110,8 +112,8 @@ tool:
       name: "Default"
   jdk:
     installations:
-    - home: "/opt/java/openjdk"
-      name: "JDK17"
+    - home: "/usr/lib/jvm/java-21-openjdk-amd64"
+      name: "JDK21"
   maven:
     installations:
     - home: "/usr/share/maven"
@@ -134,10 +136,19 @@ credentials:
                   privateKey: |
                     {{ master_private_key | indent(20) }}
               description: "SSH key for agent"
+          - string:
+              scope: GLOBAL
+              id: "telegram-bot-token"
+              secret: "${TELEGRAM_BOT_TOKEN}"
+          - string:
+              scope: GLOBAL
+              id: "telegram-chat-id"
+              secret: "${TELEGRAM_CHAT_ID}"
 
 jobs:
   - script: >
       job('seed-job') {
+        label('git')
         description('Seed job getting DSL jobs from Git')
         scm {
           git {
@@ -154,6 +165,25 @@ jobs:
             removeAction('DELETE')
             removeViewAction('DELETE')
             lookupStrategy('SEED_JOB')
+          }
+        }
+        triggers {
+          scm('H/2 * * * *')  // poll every minute (for debugging period, will be increased)
+          // githubPush()     // not usable in current setup (NAT), for future use
+        }
+
+        publishers {
+          postBuildTask {
+          task(
+              'not yet approved for use',
+              '''
+                curl -s -X POST https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage \\
+                    -d chat_id=${TELEGRAM_CHAT_ID} \\
+                    -d text="🚨 Jenkins SEED JOB: Требуется аппрув скриптов!" \\
+                    -d parse_mode=Markdown
+              '''.stripIndent(),
+              true
+            )
           }
         }
       }

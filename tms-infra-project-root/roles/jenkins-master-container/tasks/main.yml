@@ -63,7 +63,6 @@
         mode: "0777"
         owner: jenkins
 
-
 ## SSL/TLS setup
 - name: Jenkins secure connection
   block:
@@ -135,3 +134,22 @@
   community.docker.docker_compose_v2:
     project_src: "{{ master_compose_path }}"
     state: present
+
+# - name: Add GitHub webhook
+#   ansible.builtin.uri:
+#     url: "https://api.github.com/repos/{{ github_user }}/{{ jenkins_dsl_repo_name }}/hooks"
+#     method: POST
+#     headers:
+#       Accept: application/vnd.github+json
+#       Authorization: "Bearer {{ tg_bot_github_token }}"
+#       Content-Type: "application/json"
+#     body_format: json
+#     body:
+#       name: "web"
+#       active: true
+#       events: ["push"]
+#       config:
+#         url: "{{ jenkins_master_secure_url }}/github-webhook/"
+#         content_type: "json"
+#     status_code: [200, 201, 202, 422]
+

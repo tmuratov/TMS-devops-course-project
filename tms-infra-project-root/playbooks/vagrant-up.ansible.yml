@@ -1,0 +1,8 @@
+- name: Vagrantize!
+  hosts: siteholder
+  roles: [vagrantize]
+
+- name: Play prerequisites
+  hosts: vagrant_machines
+  become: true
+  roles: [prerequisites]   # installs docker, jre, python and other stuff

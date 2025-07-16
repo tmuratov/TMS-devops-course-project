@@ -8,17 +8,22 @@
         [x] SSL/TLS
         [x] JCasC
         [x] DSL jobs -- add repository here as submodule
-        [ ] Git hooks on jobs
-        [ ] Notification - Telegram or/and email
+        [x] Git hooks on jobs (scm polling but anyway)
+        [x] Notification - Telegram or/and email
+        [ ] Stage view
+        [ ] Rework agent labels
     [x] Monitoring
         [x] run in containers
         [x] automated initialization
         [x] add some dashboards as code
-        [ ] monitoring with notifications is a must-do
+        [ ] alert manager with Telegram notifications
     [ ] ELK-stack
         [ ] run in containers
         [ ] automated initialization
         [ ] add dashboards for background logs (services running in containers)
+    [ ] Other
+        [ ] Run docker compose as systemd units, make wrapper-services
+        [ ] Get something more complex for pipeline job
 
 ### QOL TODO:
     [ ] Rework remote_user configuration
@@ -29,4 +34,3 @@
         [ ] Add some kind of Python script for inventory management
     [ ] Split inventory in separate files, e.g. masters.yml, agents.yml, monitoring.yml etc.
     [ ] Move `become` into roles' tasks instaed of declaring in playbooks. Don't sudo everything
-    [ ] Manage prerequisites, filter prerequisites by host type

@@ -4,8 +4,9 @@
 # and other tags are decorative
 
 default_agent_packages_by_special_tags:
-  git: [git]
-  maven: [maven]
+  builder: [maven]
+  idler: [git, curl]
+  storage: [docker-cli]
 
 # example: registry is a service running separately from jenkins agent
-# agent tag 'registry' means that this agent has access to registry container
+# agent tag 'storage' means that this agent has access to registry+dind and will have docker-cli to hendle this
