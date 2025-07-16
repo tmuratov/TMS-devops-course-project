@@ -7,14 +7,13 @@
     [x] Jenkins + SSH agents
         [x] SSL/TLS
         [x] JCasC
-        [ ] DSL jobs -- add repository here as submodule
+        [x] DSL jobs -- add repository here as submodule
         [ ] Git hooks on jobs
         [ ] Notification - Telegram or/and email
-        [ ]
-    [ ] Monitoring
-        [ ] run in containers
-        [ ] automated initialization
-        [ ] add some dashboards as code
+    [x] Monitoring
+        [x] run in containers
+        [x] automated initialization
+        [x] add some dashboards as code
         [ ] monitoring with notifications is a must-do
     [ ] ELK-stack
         [ ] run in containers

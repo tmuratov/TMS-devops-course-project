@@ -1,24 +1,24 @@
-- name: Vagrantize!
-  hosts: siteholder
-  roles: [vagrantize]
+# - name: Vagrantize!
+#   hosts: siteholder
+#   roles: [vagrantize]
 
-- name: Play prerequisites
-  hosts: vagrant_machines
-  become: true
-  roles: [prerequisites]   # installs docker, jre, python and other stuff
+# - name: Play prerequisites
+#   hosts: vagrant_machines
+#   become: true
+#   roles: [prerequisites]   # installs docker, jre, python and other stuff
 
-### CI/CD
+# ### CI/CD
 
-- name: Jenkins master container
-  hosts: jenkins_master
-  vars_files:
-    # - ./files/become-pass.yml  # remote_user is nopasswd
-    - ./files/master-api.yml
-    - ./files/github-token.yml
-    - ./files/jks_pass.yml
-    - ./files/jenkins_id_rsa.yml
-  become: true
-  roles: [jenkins-master-container]
+# - name: Jenkins master container
+#   hosts: jenkins_master
+#   vars_files:
+#     # - ./files/become-pass.yml  # remote_user is nopasswd
+#     - ./files/master-api.yml
+#     - ./files/github-token.yml
+#     - ./files/jks_pass.yml
+#     - ./files/jenkins_id_rsa.yml
+#   become: true
+#   roles: [jenkins-master-container]
 
 - name: Setup Jenkins SSH Agents
   hosts: jenkins_ssh_agents
@@ -27,27 +27,27 @@
   become: true
   roles: [jenkins-ssh-agent-container]
 
-- name: Setup Registry (with jenkins agent for easier access from pipelines)
-  hosts: registry
-  become: true
-  vars_files:
-    - ./files/jenkins_id_rsa.yml
-  roles:
-    - registry
+# - name: Setup Registry (with jenkins agent for easier access from pipelines)
+#   hosts: registry
+#   become: true
+#   vars_files:
+#     - ./files/jenkins_id_rsa.yml
+#   roles:
+#     - registry
 
-### monitoring
+# ### monitoring
 
-- name: Monitoring master
-  hosts: monitoring
-  become: true
-  vars_files:
-    - ./files/master-api.yml
-  roles:
-    - monitoring-master
+# - name: Monitoring master
+#   hosts: monitoring
+#   become: true
+#   vars_files:
+#     - ./files/master-api.yml
+#   roles:
+#     - monitoring-master
 
-- name: Monitored nodes
-  hosts: monitored
-  become: true
-  roles:
-    - monitored-node
+# - name: Monitored nodes
+#   hosts: monitored
+#   become: true
+#   roles:
+#     - monitored-node
 

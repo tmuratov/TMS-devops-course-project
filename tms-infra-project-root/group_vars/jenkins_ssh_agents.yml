@@ -1,0 +1,11 @@
+# some special agent tags to control packages
+# installed on ssh agents, right into jenkins agent container
+# stuff like registry and dind are installed in their corresponding containers
+# and other tags are decorative
+
+default_agent_packages_by_special_tags:
+  git: [git]
+  maven: [maven]
+
+# example: registry is a service running separately from jenkins agent
+# agent tag 'registry' means that this agent has access to registry container

@@ -12,15 +12,12 @@
 
 - name: Deploy Jenkins Agent Compose config
   ansible.builtin.template:
-    src: agent-compose.yml.j2
-    dest: "{{ ssh_compose_path }}/docker-compose.yml"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     mode: preserve
-
-- name: Deploy Dockerfile
-  ansible.builtin.template:
-    src: Dockerfile
-    dest: "{{ ssh_compose_path }}"
-    mode: preserve
+  with_items:
+    - { src: agent-compose.yml.j2, dest: "{{ ssh_compose_path }}/docker-compose.yml" }
+    - { src: Dockerfile.j2, dest: "{{ ssh_compose_path }}/Dockerfile" }
 
 - name: Start Jenkins agent container
   community.docker.docker_compose_v2:

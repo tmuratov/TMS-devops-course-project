@@ -3,8 +3,12 @@ FROM ubuntu:noble
 RUN apt update && apt install -y \
     openssh-server \
     {{ jre_package }} \
-    git \
     sudo \
+    {% for tag in default_agent_packages_by_special_tags.keys() %}
+    {% if tag in hostvars[inventory_hostname]['agent_label_string'] %}
+    {{ default_agent_packages_by_special_tags[tag] | join(' ') }} \
+    {% endif %}
+    {% endfor %}
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -mU -d /home/jenkins -s /bin/bash -G sudo jenkins \

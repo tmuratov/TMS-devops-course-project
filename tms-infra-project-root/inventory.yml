@@ -48,13 +48,14 @@ all:
       hosts:
         servant01:  # master of CI/CD
     jenkins_ssh_agents:
+      # label string is {{ "packages-tags" ~ "free-form-tags" }}
       hosts:
         minion01:
           agent_label_string: "ssh java maven"
         minion02:
-          agent_label_string: "ssh git"
+          agent_label_string: "ssh java git"
         minion03:
-          agent_label_string: "ssh dind docker registry"
+          agent_label_string: "ssh java dind docker registry"
 
     # image repository
     registry:

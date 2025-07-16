@@ -96,25 +96,31 @@
         mode: "0600"
       become: true
 
-    - name: Vagrant up! (WSL only)
-      ansible.builtin.shell:
-        cmd: vagrant up
-        chdir: "{{ vagrant_data_dir }}"
-        executable: /bin/bash
+    - name: Vagrant up (WSL only)
       become: true
       environment:
         VAGRANT_WSL_ENABLE_WINDOWS_ACCESS: "1"
         PATH: "{{ ansible_env.PATH }}:/mnt/c/Windows/System32:/mnt/c/Windows/System32/WindowsPowerShell/v1.0"
-      changed_when: true # always update vms
       when: ansible_facts.get('virtualization_type') == "wsl"
+      changed_when: true # always update vms
+      retries: 3
+      delay: 10
       notify: Wait for wakeup
-
-    - name: Vagrant up! (native Linux)
       ansible.builtin.shell:
-        cmd: vagrant up --provision
+        cmd: vagrant up --provision {{ item }}
         chdir: "{{ vagrant_data_dir }}"
         executable: /bin/bash
+      loop: "{{ groups['vagrant_machines'] }}"
+
+    - name: Vagrant up (native Linux)
       become: true
-      changed_when: true # always update vms
       when: ansible_facts.get('virtualization_type') != "wsl"
+      changed_when: true # always update vms
+      retries: 3
+      delay: 10
       notify: Wait for wakeup
+      ansible.builtin.shell:
+        cmd: vagrant up --provision {{ item }}
+        chdir: "{{ vagrant_data_dir }}"
+        executable: /bin/bash
+      loop: "{{ groups['vagrant_machines'] }}"

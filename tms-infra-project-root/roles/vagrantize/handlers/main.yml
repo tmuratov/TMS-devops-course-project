@@ -1,0 +1,9 @@
+# Beautiful. Let's now wait another 10-15 sec for ssh servers to wake update
+- name: Wait for wakeup
+  ansible.builtin.command:
+    cmd: nc -z {{ hostvars[item]['ansible_host'] }} 22
+  loop: "{{ groups['vagrant_machines'] }}"
+  changed_when: false
+  retries: 10
+  delay: 5
+  when: true
