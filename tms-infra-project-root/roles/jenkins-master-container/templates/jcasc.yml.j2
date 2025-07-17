@@ -148,7 +148,7 @@ credentials:
 jobs:
   - script: >
       job('seed-job') {
-        label('git')
+        label('idler')
         description('Seed job getting DSL jobs from Git')
         scm {
           git {
