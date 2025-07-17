@@ -24,3 +24,5 @@ monitoring_master_host_ip: "{{ hostvars[monitoring_master_host]['ansible_host'] 
 jenkins_cert_path: /usr/local/share/ca-certificates/
 
 jre_package: openjdk-21-jre
+
+services_path: /usr/lib/systemd/system

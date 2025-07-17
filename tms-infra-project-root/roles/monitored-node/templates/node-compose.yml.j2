@@ -1,0 +1,14 @@
+services:
+  agent:
+    image: {{ node_exporter_image }}
+    container_name: node_exporter
+    restart: unless-stopped
+    ports:
+      - "{{ node_exporter_port }}:{{ node_exporter_port }}"
+    networks:
+      - {{ jenkins_docker_network }}
+
+
+networks:
+  {{ jenkins_docker_network }}:
+    external: true

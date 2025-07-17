@@ -1,2 +1,7 @@
 node_exporter_version: "latest"
 node_exporter_image: "prom/node-exporter:{{ node_exporter_version }}"
+node_compose_path: /opt/node_exporter
+
+compose_service_path: "{{ node_compose_path }}"
+compose_service_description: "Node exporter compose service"
+compose_service_name: node-exporter.service

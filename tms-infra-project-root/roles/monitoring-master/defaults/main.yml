@@ -10,3 +10,7 @@ compose_prometheus_cert_dir: "{{ compose_prometheus_dir }}/certs"
 
 compose_grafana_dir: "{{ monitoring_compose_dir }}/grafana"
 compose_grafana_provisioning_dir: "{{ compose_grafana_dir }}/provisioning"
+
+compose_service_path: "{{ monitoring_compose_dir }}"
+compose_service_description: "Monitoring stack (Prometheus-Grafana) compose service"
+compose_service_name: monitoring-stack.service

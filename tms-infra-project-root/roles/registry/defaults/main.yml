@@ -5,3 +5,7 @@ build_registry_image: false
 
 dind_image: "docker:dind"
 build_dind_image: false
+
+compose_service_path: "{{ registry_compose_path }}"
+compose_service_description: "Registry + DinD compose service"
+compose_service_name: registry-dind.service

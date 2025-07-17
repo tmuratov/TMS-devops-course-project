@@ -11,7 +11,7 @@
         [x] Git hooks on jobs (scm polling but anyway)
         [x] Notification - Telegram or/and email
         [ ] Stage view
-        [ ] Rework agent labels
+        [x] Rework agent labels
     [x] Monitoring
         [x] run in containers
         [x] automated initialization
@@ -22,7 +22,7 @@
         [ ] automated initialization
         [ ] add dashboards for background logs (services running in containers)
     [ ] Other
-        [ ] Run docker compose as systemd units, make wrapper-services
+        [x] Run docker compose as systemd units, make wrapper-services
         [ ] Get something more complex for pipeline job
 
 ### QOL TODO:

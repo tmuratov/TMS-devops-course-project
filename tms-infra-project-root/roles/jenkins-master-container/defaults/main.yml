@@ -6,3 +6,7 @@ jenkins_dsl_git_branch: tms-project-dsl-jobs
 master_compose_config_path: "{{ master_compose_path }}/master-config"
 master_compose_config_path_casc: "{{ master_compose_config_path }}/casc_configs"
 master_compose_config_path_dsl: "{{ master_compose_config_path }}/jobs"
+
+compose_service_path: "{{ master_compose_path }}"
+compose_service_description: "Jenkins master compose service"
+compose_service_name: jenkins-master.service

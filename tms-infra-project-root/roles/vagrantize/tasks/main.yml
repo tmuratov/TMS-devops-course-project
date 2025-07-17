@@ -116,8 +116,8 @@
       become: true
       when: ansible_facts.get('virtualization_type') != "wsl"
       changed_when: true # always update vms
-      retries: 3
-      delay: 10
+      retries: 5
+      delay: 30
       notify: Wait for wakeup
       ansible.builtin.shell:
         cmd: vagrant up --provision {{ item }}

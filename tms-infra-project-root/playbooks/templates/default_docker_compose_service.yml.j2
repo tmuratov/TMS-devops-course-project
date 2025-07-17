@@ -1,0 +1,16 @@
+[Unit]
+Description={{ compose_service_name }}
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory={{ compose_service_path }}
+Environment=COMPOSE_HTTP_TIMEOUT=600
+ExecStart=/usr/bin/env /usr/bin/docker compose -f {{ compose_service_path }}/docker-compose.yml up --build -d
+ExecStop=/usr/bin/env /usr/bin/docker compose -f {{ compose_service_path }}/docker-compose.yml stop
+StandardOutput=syslog
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+[Unit]
+Description=Jenkins SSH agent compose service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory={{ ssh_compose_path }}
+Environment=COMPOSE_HTTP_TIMEOUT=600
+ExecStart=/usr/bin/env /usr/bin/docker compose -f {{ ssh_compose_path }}/docker-compose.yml up --build -d
+ExecStop=/usr/bin/env /usr/bin/docker compose -f {{ ssh_compose_path }}/docker-compose.yml stop
+StandardOutput=syslog
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

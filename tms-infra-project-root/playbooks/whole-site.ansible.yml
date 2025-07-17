@@ -12,19 +12,19 @@
 - name: Setup Jenkins SSH Agents
   hosts: jenkins_ssh_agents
   vars_files:
-    - ./files/jenkins_id_rsa.yml
+    - ./vault/jenkins_id_rsa.yml
   become: true
   roles: [jenkins-ssh-agent-container]
 
 - name: Jenkins master container
   hosts: jenkins_master
   vars_files:
-    # - ./files/become-pass.yml  # remote_user is nopasswd
-    - ./files/master-api.yml
-    - ./files/github-token.yml
-    - ./files/jks_pass.yml
-    - ./files/jenkins_id_rsa.yml
-    - ./files/tg_bot.yml
+    # - ./vault/become-pass.yml  # remote_user is nopasswd
+    - ./vault/master-api.yml
+    - ./vault/github-token.yml
+    - ./vault/jks_pass.yml
+    - ./vault/jenkins_id_rsa.yml
+    - ./vault/tg_bot.yml
   become: true
   roles: [jenkins-master-container]
 
@@ -32,7 +32,7 @@
   hosts: registry
   become: true
   vars_files:
-    - ./files/jenkins_id_rsa.yml
+    - ./vault/jenkins_id_rsa.yml
   roles:
     - registry
 
@@ -42,7 +42,7 @@
   hosts: monitoring
   become: true
   vars_files:
-    - ./files/master-api.yml
+    - ./vault/master-api.yml
   roles:
     - monitoring-master
 
