@@ -33,8 +33,8 @@ Vagrant.configure("2") do |config|
       vm.vm.provision "shell", inline: <<-SHELL
         timedatectl set-timezone Europe/Moscow
 
-        sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
-        systemctl restart ssh
+        {# sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config
+        systemctl restart ssh #}
 
         useradd -mU -s /bin/bash -G sudo {{ ansible_user }}
 
